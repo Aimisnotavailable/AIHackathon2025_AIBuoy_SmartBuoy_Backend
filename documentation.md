@@ -53,7 +53,6 @@ Fishermen often spend hours locating viable fishing sites, which leads to wasted
 
 1. Download the mobile or web client from the provided release assets.  
 2. Open the configuration file and set the server’s base URL to your deployment endpoint.  
-3. Launch the application and log in with your credentials.  
-4. View real-time fish detection alerts on the map dashboard.  
+3. View real-time fish detection alerts on the map dashboard.  
 
 ---
