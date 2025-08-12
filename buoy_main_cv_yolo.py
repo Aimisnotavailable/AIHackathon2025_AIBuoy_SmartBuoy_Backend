@@ -118,7 +118,7 @@ def main():
         annotated = annotate_frame(
             frame, boxes, confidences, class_ids, model.names
         )
-
+        
         try:
             frp = frame_to_latin1_dict(frame)
             current_datetime = datetime.now()
@@ -131,8 +131,6 @@ def main():
         except Exception as e:
             print(e)
             pass
-
-
 
         fps = 1 / elapsed if elapsed > 0 else 0
         cv2.putText(

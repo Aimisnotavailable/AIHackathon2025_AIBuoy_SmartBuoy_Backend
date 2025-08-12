@@ -48,6 +48,15 @@ A lightweight backend service that collects, processes, and stores sensor data f
    ```bash
    pip install -r requirements.txt
    ```
+3. Run instructions for the server setup 
+   ```bash
+   python -m flask run --host=0.0.0.0
+   ```
+
+4. Run instructions for the camera configuration
+   ```bash
+   python -m buoy_main_cv_yolo --source <default is set to camera> <path to the video feed file>
+   ```
 ---
 
 ## Usage
