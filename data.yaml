@@ -1,0 +1,24 @@
+train: ./v1_new/train/images
+val: ./v1_new/valid/images
+test: ./v1_new/test/images
+
+labels:
+  train: train/labels
+  val:   valid/labels
+  
+nc: 1
+names: ['Fish']
+
+
+#-----------------------------------------------------------------------------
+# Label format (per .txt file, one line per object):
+# <class_id> <x_center> <y_center> <width> <height>
+# All coordinates are normalized to [0.0 – 1.0] relative to image size.
+# -----------------------------------------------------------------------------
+
+roboflow:
+  workspace: mai-allam
+  project: fish-xscyy
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/mai-allam/fish-xscyy/dataset/1
