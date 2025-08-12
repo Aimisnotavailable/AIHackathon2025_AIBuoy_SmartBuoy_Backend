@@ -3,6 +3,9 @@ import argparse
 import time
 from ultralytics import YOLO
 import json
+import requests
+from datetime import datetime
+import base64
 
 def parse_args():
     """
@@ -46,11 +49,29 @@ def annotate_frame(frame, boxes, confidences, class_ids, names):
         )
     return frame
 
-def dump(data):
+def frame_to_latin1_dict(frame, fmt='jpg'):
+    """
+    Encode an OpenCV frame to raw bytes, then map bytes→chars via Latin-1
+    so you can stuff it into JSON as a regular Python string.
+    """
+    success, buffer = cv2.imencode(f'.{fmt}', frame)
+    if not success:
+        raise RuntimeError("Frame encoding failed")
 
-    with open("dump.txt", "w+") as fp:
-        fp.write(str(data.orig_img))
-    return
+    raw_bytes = buffer.tobytes()
+    latin1_str = raw_bytes.decode('latin1')   # 1:1 mapping
+
+    return {
+        "filename": f"frame.{fmt}",
+        "format": fmt,
+        "data":     latin1_str
+    }
+
+# def dump(data):
+
+#     with open("dump.txt", "w+") as fp:
+#         fp.write(str(data.orig_img))
+#     return
 
 def main():
     args = parse_args()
@@ -66,11 +87,15 @@ def main():
         return
 
     print("Press 'q' to quit.")
-
+    delay_ms = int(1000 / 24) # Calculate delay for 24 FPS
+    count = 0
     while True:
         ret, frame = cap.read()
+            # If frame is not read successfully, it means the end of the video is reached
         if not ret:
-            break
+            # Reset the video capture to the beginning for looping
+            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            continue  # Continue to the next iteration to read the first frame again
 
         # Inference: returns a list of Results, take the first (batch size = 1)
         start_time = time.time()
@@ -82,7 +107,6 @@ def main():
             stream=False         # we process frame-by-frame
         )[0]
 
-        dump(results)
         elapsed = time.time() - start_time
 
         # Extract boxes, confidences, class IDs
@@ -94,6 +118,21 @@ def main():
         annotated = annotate_frame(
             frame, boxes, confidences, class_ids, model.names
         )
+
+        try:
+            frp = frame_to_latin1_dict(frame)
+            current_datetime = datetime.now()
+            formatted = current_datetime.strftime("%B %d, %Y %I:%M:%S %p")
+            requests.post("http://127.0.0.1:5000/fetch_data", json={"buoy1" : {"fishCount" : len(boxes), 
+                                                                                    "coords" : [12.578708272118016, 122.26924396776738],
+                                                                                    "dateTime": formatted}})
+            requests.post("http://127.0.0.1:5000/capture_feed", json={"frame" : frp})
+            time.sleep(0.04167)
+        except Exception as e:
+            print(e)
+            pass
+
+
 
         fps = 1 / elapsed if elapsed > 0 else 0
         cv2.putText(
