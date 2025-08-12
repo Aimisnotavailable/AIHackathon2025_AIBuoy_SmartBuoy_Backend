@@ -8,7 +8,7 @@ A lightweight backend service that collects, processes, and stores sensor data f
 
 - LoRa-based mesh network between buoys for low-power, long-range communication  
 - Central gateway buoy that uplinks aggregated data via cellular or satellite  
-- REST API for buoy registration, status checks, and data ingestion  
+- Self built Flask API for buoy communication 
 - Real-time validation and normalization of sensor payloads  
 - Time-series storage in InfluxDB and metadata in PostgreSQL  
 - Threshold-based alerts delivered via webhooks or email notifications  
@@ -48,29 +48,17 @@ A lightweight backend service that collects, processes, and stores sensor data f
    ```bash
    pip install -r requirements.txt
    ```
-
-3. Configure environment variables in a `.env` file based on `.env.example`  
-
-4. Launch with Docker Compose  
-   ```bash
-   docker-compose up -d
-   ```
-
 ---
 
 ## Usage
 
-- Register a new buoy  
-  `POST /api/v1/buoy/register`  
-
 - Send sensor data  
-  `POST /api/v1/data`  
+  `POST /api/v1/data/fetch_data`
+  `POST /api/v1/data/capture_feed`  
 
 - Fetch buoy status  
-  `GET /api/v1/buoy/{id}/status`  
-
-- Query stored measurements  
-  `GET /api/v1/data?from=<ts>&to=<ts>`  
+  `GET /api/v1/request_buoy`
+  `GET /api/v1/live_feed`
 
 ---
 
